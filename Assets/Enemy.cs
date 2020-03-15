@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
@@ -9,6 +10,20 @@ public class Enemy : MonoBehaviour
     private Transform target;
     private int changepath = 0;
     private int wavepointIndex = 0;
+    private static int destroyed;
+
+    public Text killedtext;
+
+    void OnMouseDown()
+    {
+        
+        
+        destroyed++;
+        Destroy(gameObject);
+        
+       
+                    
+    }
 
     void Start()
     {
@@ -17,6 +32,8 @@ public class Enemy : MonoBehaviour
     void Update()
     {
 
+
+        
         Vector3 dir = target.position - transform.position;
         transform.Translate(dir.normalized * speed * Time.deltaTime,Space.World);
         changepath++;
@@ -29,6 +46,8 @@ public class Enemy : MonoBehaviour
             else
             GetNextWayPoint();
         }
+        Debug.Log(destroyed);
+        //killedtext.text = destroyed.ToString();
     }
     
     void GetNextWayPoint()
@@ -54,7 +73,6 @@ void GetNextWayPoint1()
     wavepointIndex++;
     target = Waypoints1.points[wavepointIndex];
 }
-
 
 }
 
