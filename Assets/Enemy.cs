@@ -16,14 +16,16 @@ public class Enemy : MonoBehaviour
 
     void OnMouseDown()
     {
-        
-        
-        destroyed++;
-        Destroy(gameObject);
+        //if ((wavepointIndex == 0 || wavepointIndex == 1) || (wavepointIndex == 4 || wavepointIndex == 5))
+        if (wavepointIndex == 1 || wavepointIndex == 3)
+        {
+            destroyed++;
+            Destroy(gameObject);
+        }
+    }
         
        
-                    
-    }
+      
 
     void Start()
     {
@@ -39,11 +41,7 @@ public class Enemy : MonoBehaviour
         changepath++;
         if (Vector3.Distance(transform.position,target.position) <= 0.2f)
         {
-            if (changepath % 2 == 0)
-            {
-               GetNextWayPoint1();
-            }
-            else
+      
             GetNextWayPoint();
         }
         Debug.Log(destroyed);
@@ -62,17 +60,7 @@ public class Enemy : MonoBehaviour
         target = Waypoints.points[wavepointIndex];
     }
 
-void GetNextWayPoint1()
-{
-    if (wavepointIndex >= Waypoints1.points.Length - 1)
-    {
-        Destroy(gameObject);
-        return;
 
-    }
-    wavepointIndex++;
-    target = Waypoints1.points[wavepointIndex];
-}
 
 }
 
