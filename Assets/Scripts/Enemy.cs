@@ -1,4 +1,11 @@
-﻿using System.Collections;
+﻿/*
+Code written for INFR 4320
+Victor Zhang 100421055
+Mathooshan Thevakumaran 100553777
+Regan Tran 100622360
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;

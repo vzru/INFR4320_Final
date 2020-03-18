@@ -1,25 +1,36 @@
-﻿using System.Collections;
+﻿/*
+Code written for INFR 4320
+Victor Zhang 100421055
+Mathooshan Thevakumaran 100553777
+Regan Tran 100622360
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Any Action that the AI can do
 public enum Actions
 {
     DONOTHING,
     BOMB
 }
 
+// Different states for each lane
 public enum States
 {
     EMPTY,
     ENEMY
 }
 
+// Location of lane sections
 public enum StateLoc
 {
     LANEA,
     LANEB
 }
 
+// AI Controller that handles all the AI
 public class AIController : MonoBehaviour
 {
     public GameObject Tower;
@@ -55,10 +66,18 @@ public class AIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        TurnUpdate();
+    }
+
+    void TurnUpdate()
+    {
         if (!gameEnd)
         {
+            // Game State Updates
             MoveEnemy(ref states);
             SpawnEnemy(ref states);
+
+            // AI Action Selection
             Actions action = Actions.DONOTHING;
             float randAction = Random.Range(0.0f, 1.0f);
             StateLoc newTarget = StateLoc.LANEA;
@@ -66,18 +85,6 @@ public class AIController : MonoBehaviour
             if (randAction <= policy[(int)action, (int)states[0], (int)states[1]])
             {
                 action = Actions.BOMB;
-                //for (int i = 0; i < 2; i++)
-                //{
-                //    for (int j = 0; i < 2; j++)
-                //    {
-                //        rand = rand - policy[i, j];
-                //        if (rand <= 0)
-                //        {
-                //            newTarget = (StateLoc)((i * 2) + j);
-                //            break;
-                //        }
-                //    }
-                //}
                 if (randTarget <= 0.5f)
                 {
                     newTarget = StateLoc.LANEA;
@@ -104,11 +111,14 @@ public class AIController : MonoBehaviour
             }
             if (action == Actions.BOMB)// && timer <= 0)
             {
+                // Looping through each lane and check the states to update rewards
                 for (int i = 0; i < 2; i++)
                 {
                     if ((int)newTarget == i)
                     {
                         //timer = 5.0f;
+
+                        // State Checker
                         if (states[i] == States.EMPTY)
                         {
                             --reward;
@@ -118,12 +128,15 @@ public class AIController : MonoBehaviour
                             ++reward;
                             ++kills;
                         }
+
+                        // Bombed the state and wiped clean
                         states[i] = States.EMPTY;
                     }
                 }
             }
             else
             {
+                // For doing nothing action
                 for (int i = 0; i < 2; i++)
                 {
                     if ((int)newTarget == i)
@@ -135,6 +148,7 @@ public class AIController : MonoBehaviour
                         if (states[i] == States.ENEMY)
                         {
                             reward -= (i + 1);
+                            // Enemy is at the last section of the lane and will damage the base/tower since no action was taken
                             if (newTarget == StateLoc.LANEB)
                             {
                                 --hp;
@@ -143,6 +157,8 @@ public class AIController : MonoBehaviour
                     }
                 }
             }
+
+            // End Game Condition Checkers
             if (kills >= 10)
             {
                 Debug.Log("You Win!");
@@ -155,12 +171,18 @@ public class AIController : MonoBehaviour
                 gameEnd = true;
             }
 
+            // Apply the discount rate of 1%
             float rewardSum = GetNextReward(states, action, newTarget, kills, hp, reward) * 0.01f;
             Debug.Log("Rewards: " + reward.ToString() + ", Action: " + actionIndex.ToString() + ", LaneA: " + stateLaneA.ToString() + ", LaneB: " + stateLaneB.ToString());
+            
+            // Update Policy Matrixs based on reward value 
             policy[actionIndex, stateLaneA, stateLaneB] += rewardSum;
         }
+
     }
 
+    // Recursive Function that returns the sum of all the future reward values given
+    // Current state of the game, the next action, target of the next action, current progress towards win goal, current base's hp, current reward value
     public int GetNextReward(States[] currentState, Actions move, StateLoc target, int currentKills, int currentHP, int currentReward)
     {
         if (move == Actions.BOMB)// && timer <= 0)
@@ -225,21 +247,9 @@ public class AIController : MonoBehaviour
         float randAction = Random.Range(0.0f, 1.0f);
         StateLoc newTarget = StateLoc.LANEA;
         float randTarget = Random.Range(0.0f, 1.0f);
-        if (randAction <= (2.0f / 3.0f))
+        if (randAction <= policy[(int)action, (int)states[0], (int)states[1]])
         {
             action = Actions.BOMB;
-            //for (int i = 0; i < 2; i++)
-            //{
-            //    for (int j = 0; i < 2; j++)
-            //    {
-            //        rand = rand - policy[i, j];
-            //        if (rand <= 0)
-            //        {
-            //            newTarget = (StateLoc)((i * 2) + j);
-            //            break;
-            //        }
-            //    }
-            //}
             if (randTarget <= 0.5f)
             {
                 newTarget = StateLoc.LANEA;
@@ -249,11 +259,11 @@ public class AIController : MonoBehaviour
                 newTarget = StateLoc.LANEB;
             }
         }
-        GetNextReward(currentState, action, newTarget, currentKills, currentHP, currentReward);
-
-        return 0;
+        // Recursive Call to explore the branches
+        return currentReward + GetNextReward(currentState, action, newTarget, currentKills, currentHP, currentReward);
     }
 
+    // Updates the states of all positions based on enemy movement
     public void MoveEnemy(ref States[] state)
     {
         for (int i = 0; i < state.Length; i++)
@@ -269,6 +279,7 @@ public class AIController : MonoBehaviour
         }
     }
 
+    // Update the state when an enemy is spawned
     public void SpawnEnemy(ref States[] state)
     {
         if (state[(int)StateLoc.LANEA] == States.EMPTY)
