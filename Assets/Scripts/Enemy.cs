@@ -20,7 +20,8 @@ public class Enemy : MonoBehaviour
     private static int destroyed;
     public Text killedtext;
     private GameObject destruction;
-   
+  
+    // When mouse clicked , destory the enemy  
     void OnMouseDown()
     {
        
@@ -31,16 +32,16 @@ public class Enemy : MonoBehaviour
         }
     }
     
-
+    //start point for new enemy
     void Start()
     {
         target = Waypoints.points[0];
     }
+
+    //based on waypoint , translate to new waypoint
     void Update()
     {
 
-
-        
         Vector3 dir = target.position - transform.position;
         transform.Translate(dir.normalized * speed * Time.deltaTime,Space.World);
         changepath++;
@@ -49,10 +50,10 @@ public class Enemy : MonoBehaviour
       
             GetNextWayPoint();
         }
-        //Debug.Log(destroyed);
-        //killedtext.text = destroyed.ToString();
+        
     }
     
+    //find next waypoint
     void GetNextWayPoint()
     {
         if (wavepointIndex >= Waypoints.points.Length - 1)

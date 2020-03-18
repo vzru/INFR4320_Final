@@ -18,6 +18,8 @@ public class WaveSpawner : MonoBehaviour
     private float countdown = 2f;
     private int WaveIndex = 1;
     public Text WaveCountDownText;
+
+    //countdown timer inbetween each wave
     void Update()
     {
         if (countdown<= 0f)
@@ -27,12 +29,12 @@ public class WaveSpawner : MonoBehaviour
             countdown = timeBetweenWaves;
         }
         countdown -= Time.deltaTime;
-
+        //text UI for game screen
         WaveCountDownText.text = Mathf.Round(countdown).ToString();
     }
 
 
-
+    //how often the wave spawns
     IEnumerator SpawnWave()
     {
         WaveIndex++;
@@ -44,7 +46,7 @@ public class WaveSpawner : MonoBehaviour
 
 
     }
-     
+    //instantiate enemy
     void SpawnEnemy()
     {
         if (SpawnPoint != null)
