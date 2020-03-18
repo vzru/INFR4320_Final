@@ -11,21 +11,19 @@ public class Enemy : MonoBehaviour
     private int changepath = 0;
     private int wavepointIndex = 0;
     private static int destroyed;
-
     public Text killedtext;
-
+    private GameObject destruction;
+   
     void OnMouseDown()
     {
-        //if ((wavepointIndex == 0 || wavepointIndex == 1) || (wavepointIndex == 4 || wavepointIndex == 5))
-        if (wavepointIndex == 1 || wavepointIndex == 3)
+       
+        if ((Waypoints.points[0] || Waypoints.points[1]) || (Waypoints.points[2] || Waypoints.points[3]))
         {
-            destroyed++;
             Destroy(gameObject);
+            // destroyed++;
         }
     }
-        
-       
-      
+    
 
     void Start()
     {
