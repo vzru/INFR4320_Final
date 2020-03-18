@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour
       
             GetNextWayPoint();
         }
-        Debug.Log(destroyed);
+        //Debug.Log(destroyed);
         //killedtext.text = destroyed.ToString();
     }
     
