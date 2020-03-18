@@ -199,6 +199,7 @@ public class AIController : MonoBehaviour
                         if (target == StateLoc.LANEB)
                         {
                             --currentHP;
+                            currentReward -= 5;
                         }
                     }
                 }
